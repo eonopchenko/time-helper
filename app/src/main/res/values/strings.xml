@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Time Helper</string>
+    <string name="replication_completed">Replication completed</string>
+</resources>
