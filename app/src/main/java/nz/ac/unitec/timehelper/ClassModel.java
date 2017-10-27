@@ -3,7 +3,6 @@ package nz.ac.unitec.timehelper;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.cloudant.sync.datastore.Datastore;
 import com.cloudant.sync.datastore.DatastoreManager;
@@ -39,7 +38,7 @@ public class ClassModel {
         manager = DatastoreManager.getInstance(path);
 
         try {
-            cloudantUri = new java.net.URI(mContext.getResources().getString(R.string.cloudantUrl) + "/your_db_name");
+            cloudantUri = new java.net.URI(mContext.getResources().getString(R.string.cloudantUrl) + "/timetable_db");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

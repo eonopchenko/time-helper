@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -48,13 +47,13 @@ public class ClassAdapter extends BaseAdapter implements ListAdapter {
             convertView = inflater.inflate(R.layout.class_item, parent, false);
         }
 
-        TextView desc = (TextView) convertView.findViewById(R.id.txtClassTitle);
-        CheckBox completed = (CheckBox) convertView.findViewById(R.id.cbClass);
-
+        TextView start = (TextView) convertView.findViewById(R.id.txtClassStart);
+        TextView duration = (TextView) convertView.findViewById(R.id.txtClassDuration);
+        TextView title = (TextView) convertView.findViewById(R.id.txtClassTitle);
         ClassItem t = this.classes.get(position);
-        desc.setText(t.getTitle());
-        completed.setChecked(false);
-        completed.setId(position);
+        start.setText(t.getStart());
+        duration.setText(t.getDuration());
+        title.setText(t.getTitle());
 
         return convertView;
     }

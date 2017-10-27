@@ -2,10 +2,8 @@ package nz.ac.unitec.timehelper;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         BMSClient.getInstance().initialize(getApplicationContext(), BMSClient.REGION_SYDNEY);
 
         /// Initialize put-request to Bluemix cloud
-        Request request = new Request(getApplicationContext().getResources().getString(R.string.cloudantUrl) + "/your_db_name", Request.PUT);
+        Request request = new Request(getApplicationContext().getResources().getString(R.string.cloudantUrl) + "/timetable_db", Request.PUT);
 
         /// Get auth string and convert to UTF-8
         byte[] byteAuth = new byte[0];
@@ -85,8 +83,6 @@ public class MainActivity extends AppCompatActivity {
         lstClass = (ListView) findViewById(R.id.lstClass);
 
         reloadClassesFromModel();
-
-
 
         /// Subscribe on push-notifications https://console.bluemix.net/docs/services/mobilepush/getting-started.html
         push = MFPPush.getInstance();

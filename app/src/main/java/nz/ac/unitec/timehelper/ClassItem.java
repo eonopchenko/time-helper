@@ -10,21 +10,36 @@ import java.util.Map;
 
 public class ClassItem {
 
+    private String mStart;
+    private String mDuration;
     private String mTitle;
     private DocumentRevision rev;
+
+    public String getStart() {
+        return mStart;
+    }
+
+    public String getDuration() {
+        return mDuration;
+    }
 
     public String getTitle() {
         return mTitle;
     }
 
-    public ClassItem(String title) {
+    public ClassItem(String start, String duration, String title) {
+        this.mStart = start;
+        this.mDuration = duration;
         this.mTitle = title;
     }
 
     static ClassItem fromRevision(DocumentRevision rev) {
         Map<String, Object> map = rev.asMap();
-        if(map.containsKey("description")) {
-            ClassItem t = new ClassItem((String) map.get("description"));
+
+        if(map.containsKey("start") &&
+           map.containsKey("duration") &&
+           map.containsKey("title")) {
+            ClassItem t = new ClassItem((String) map.get("start"), (String) map.get("duration"), (String) map.get("title"));
             t.rev = rev;
             return t;
         }
