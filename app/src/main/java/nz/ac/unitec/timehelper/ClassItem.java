@@ -33,12 +33,14 @@ public class ClassItem {
         this.mTitle = title;
     }
 
-    static ClassItem fromRevision(DocumentRevision rev) {
+    static ClassItem fromRevision(DocumentRevision rev, String email) {
         Map<String, Object> map = rev.asMap();
 
         if(map.containsKey("start") &&
            map.containsKey("duration") &&
-           map.containsKey("title")) {
+           map.containsKey("title") &&
+           map.containsKey("user") &&
+           map.get("user").equals(email)) {
             ClassItem t = new ClassItem((String) map.get("start"), (String) map.get("duration"), (String) map.get("title"));
             t.rev = rev;
             return t;

@@ -41,10 +41,21 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean mReplicationRequested = false;
 
+    static MainActivity mainActivity;
+
+    private String mEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mainActivity = this;
+
+        mEmail = "";
+
+        if(sClasses == null) {
+            sClasses = new ClassModel(this.getApplicationContext());
+        }
 
         AppID.getInstance().initialize(getApplicationContext(), "382fc624-ad4d-461d-867c-99be7a1f2179", AppID.REGION_SYDNEY);
 
@@ -63,11 +74,14 @@ public class MainActivity extends AppCompatActivity {
                 String userId = identityToken.getSubject();
                 String picUrl = identityToken.getPicture();
                 String name = identityToken.getName();
-                String email = identityToken.getEmail();
-                System.out.println(userId + ", " + name + ", " + email);
+                mEmail = identityToken.getEmail();
+                System.out.println(userId + ", " + name + ", " + mEmail);
+                startReplication();
             }
         });
+    }
 
+    void startReplication() {
         /// Initialize BMSClient (https://console.bluemix.net/docs/cloudnative/sdk_BMSClient.html)
         BMSClient.getInstance().initialize(getApplicationContext(), BMSClient.REGION_SYDNEY);
 
@@ -104,13 +118,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(sClasses == null) {
-            sClasses = new ClassModel(this.getApplicationContext());
-        }
         sClasses.setReplicationListener(this);
         lstClass = (ListView) findViewById(R.id.lstClass);
 
-        reloadClassesFromModel();
+        reloadClassesFromModel(mEmail);
 
         /// Subscribe on push-notifications https://console.bluemix.net/docs/services/mobilepush/getting-started.html
         push = MFPPush.getInstance();
@@ -167,14 +178,19 @@ public class MainActivity extends AppCompatActivity {
         mReplicationRequested = true;
     }
 
-    private void reloadClassesFromModel() {
-        List<ClassItem> classes = sClasses.allClasses();
-        this.mClassAdapter = new ClassAdapter(this, classes);
-        lstClass.setAdapter(this.mClassAdapter);
+    private void reloadClassesFromModel(final String email) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                List<ClassItem> classes = sClasses.allClasses(email);
+                mainActivity.mClassAdapter = new ClassAdapter(mainActivity, classes);
+                lstClass.setAdapter(mainActivity.mClassAdapter);
+            }
+        });
     }
 
     void replicationComplete() {
-        reloadClassesFromModel();
+        reloadClassesFromModel(mEmail);
         mReplicationRequested = false;
         Toast.makeText(getApplicationContext(),
                 R.string.replication_completed,
@@ -182,6 +198,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void replicationError() {
-        reloadClassesFromModel();
+        reloadClassesFromModel(mEmail);
     }
 }

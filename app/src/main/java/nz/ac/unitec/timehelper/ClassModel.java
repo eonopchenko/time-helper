@@ -54,13 +54,13 @@ public class ClassModel {
         mHandler = new Handler(Looper.getMainLooper());
     }
 
-    List<ClassItem> allClasses() {
+    List<ClassItem> allClasses(String email) {
         int nDocs = this.ds.getDocumentCount();
         List<DocumentRevision> all = this.ds.getAllDocuments(0, nDocs, true);
         List<ClassItem> classes = new ArrayList<>();
 
         for(DocumentRevision rev : all) {
-            ClassItem t = ClassItem.fromRevision(rev);
+            ClassItem t = ClassItem.fromRevision(rev, email);
             if (t != null) {
                 classes.add(t);
             }
