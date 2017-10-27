@@ -7,6 +7,12 @@ import android.util.Base64;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.ibm.bluemix.appid.android.api.AppID;
+import com.ibm.bluemix.appid.android.api.AuthorizationException;
+import com.ibm.bluemix.appid.android.api.AuthorizationListener;
+import com.ibm.bluemix.appid.android.api.LoginWidget;
+import com.ibm.bluemix.appid.android.api.tokens.AccessToken;
+import com.ibm.bluemix.appid.android.api.tokens.IdentityToken;
 import com.ibm.mobilefirstplatform.clientsdk.android.core.api.BMSClient;
 import com.ibm.mobilefirstplatform.clientsdk.android.core.api.Request;
 import com.ibm.mobilefirstplatform.clientsdk.android.core.api.Response;
@@ -39,6 +45,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AppID.getInstance().initialize(getApplicationContext(), "382fc624-ad4d-461d-867c-99be7a1f2179", AppID.REGION_SYDNEY);
+
+        final LoginWidget loginWidget = AppID.getInstance().getLoginWidget();
+        loginWidget.launch(this, new AuthorizationListener() {
+            @Override
+            public void onAuthorizationFailure (AuthorizationException exception) {
+            }
+
+            @Override
+            public void onAuthorizationCanceled () {
+            }
+
+            @Override
+            public void onAuthorizationSuccess (AccessToken accessToken, IdentityToken identityToken) {
+                String userId = identityToken.getSubject();
+                String picUrl = identityToken.getPicture();
+                String name = identityToken.getName();
+                String email = identityToken.getEmail();
+                System.out.println(userId + ", " + name + ", " + email);
+            }
+        });
 
         /// Initialize BMSClient (https://console.bluemix.net/docs/cloudnative/sdk_BMSClient.html)
         BMSClient.getInstance().initialize(getApplicationContext(), BMSClient.REGION_SYDNEY);
@@ -109,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        push.registerDeviceWithUserId("Sample UserID", new MFPPushResponseListener<String>() {
+        push.registerDeviceWithUserId("jake.spb@gmail.com", new MFPPushResponseListener<String>() {
             @Override
             public void onSuccess(String response) {
                 push.listen(notificationListener);

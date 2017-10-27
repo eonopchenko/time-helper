@@ -5,11 +5,12 @@ android {
     buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "nz.ac.unitec.timehelper"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = ['appIdRedirectScheme': android.defaultConfig.applicationId]
     }
     buildTypes {
         release {
@@ -42,6 +43,7 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile group: 'com.cloudant', name: 'cloudant-sync-datastore-android', version:'1.1.5'
     compile ('com.ibm.mobilefirstplatform.clientsdk.android:push:3.+')
+    compile group: 'com.github.ibm-cloud-security', name: 'appid-clientsdk-android', version:'1.+'
 }
 
 apply plugin: 'com.google.gms.google-services'
