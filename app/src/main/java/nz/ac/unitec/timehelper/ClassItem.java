@@ -51,15 +51,21 @@ public class ClassItem {
         this.mVenue = venue;
     }
 
-    static ClassItem fromRevision(DocumentRevision rev, String email) {
+    static ClassItem fromRevision(DocumentRevision rev, String userId) {
         Map<String, Object> map = rev.asMap();
 
         if(map.containsKey("lecturerId") &&
-           map.get("lecturerId").equals(email) &&
+           map.get("lecturerId").equals(userId) &&
            map.containsKey("start") &&
            map.containsKey("duration") &&
            map.containsKey("title")) {
-            ClassItem t = new ClassItem((String) map.get("start"), (String) map.get("duration"), (String) map.get("title"), Double.parseDouble((String) map.get("lat")), Double.parseDouble((String) map.get("lng")), (String) map.get("venue"));
+            ClassItem t = new ClassItem(
+                    (String) map.get("start"),
+                    (String) map.get("duration"),
+                    (String) map.get("title"),
+                    Double.parseDouble((String) map.get("lat")),
+                    Double.parseDouble((String) map.get("lng")),
+                    (String) map.get("venue"));
             t.rev = rev;
             return t;
         }

@@ -15,10 +15,14 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +32,7 @@ import java.util.List;
  * Created by eugene on 29/10/2017.
  */
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, ClassLocationAvailableListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback/*, ClassLocationAvailableListener*/ {
 
     private static final int ACTIVITY_START_CAMERA_APP = 0;
     GoogleMap mGoogleMap;
@@ -36,9 +40,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, ClassLo
     View mView;
     List<ClassItem> mClassList;
 
-    @Override
-    public void onClassLocationAvailable(List<ClassItem> classes) {
+//    @Override
+    public void onClassLocationAvailable(final List<ClassItem> classes, MainActivity activity) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (ClassItem classItem : classes) {
+                    double lat = classItem.getLat();
+                    double lng = classItem.getLng();
+                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("title").snippet(lat + ", " + lng));
+                    CameraPosition camPos = CameraPosition.builder().target(new LatLng(lat, lng)).zoom(16).bearing(0).tilt(45).build();
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(camPos));
+                }
 
+                mView.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     @Override
