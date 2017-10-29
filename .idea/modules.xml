@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TimeHelper.iml" filepath="$PROJECT_DIR$/TimeHelper.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/time-helper.iml" filepath="$PROJECT_DIR$/time-helper.iml" />
     </modules>
   </component>
 </project>

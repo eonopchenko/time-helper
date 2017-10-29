@@ -13,6 +13,9 @@ public class ClassItem {
     private String mStart;
     private String mDuration;
     private String mTitle;
+    private double mLat;
+    private double mLng;
+    private String mVenue;
     private DocumentRevision rev;
 
     public String getStart() {
@@ -27,21 +30,36 @@ public class ClassItem {
         return mTitle;
     }
 
-    public ClassItem(String start, String duration, String title) {
+    public double getLat() {
+        return mLat;
+    }
+
+    public double getLng() {
+        return mLng;
+    }
+
+    public String getVenue() {
+        return mVenue;
+    }
+
+    public ClassItem(String start, String duration, String title, double lat, double lng, String venue) {
         this.mStart = start;
         this.mDuration = duration;
         this.mTitle = title;
+        this.mLat = lat;
+        this.mLng = lng;
+        this.mVenue = venue;
     }
 
     static ClassItem fromRevision(DocumentRevision rev, String email) {
         Map<String, Object> map = rev.asMap();
 
-        if(map.containsKey("start") &&
+        if(map.containsKey("lecturerId") &&
+           map.get("lecturerId").equals(email) &&
+           map.containsKey("start") &&
            map.containsKey("duration") &&
-           map.containsKey("title") &&
-           map.containsKey("user") &&
-           map.get("user").equals(email)) {
-            ClassItem t = new ClassItem((String) map.get("start"), (String) map.get("duration"), (String) map.get("title"));
+           map.containsKey("title")) {
+            ClassItem t = new ClassItem((String) map.get("start"), (String) map.get("duration"), (String) map.get("title"), Double.parseDouble((String) map.get("lat")), Double.parseDouble((String) map.get("lng")), (String) map.get("venue"));
             t.rev = rev;
             return t;
         }
