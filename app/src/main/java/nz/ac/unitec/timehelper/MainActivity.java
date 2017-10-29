@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
                 String picUrl = identityToken.getPicture();
                 String name = identityToken.getName();
                 mEmail = identityToken.getEmail();
-                System.out.println(userId + ", " + name + ", " + mEmail);
                 startReplication();
             }
         });
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         BMSClient.getInstance().initialize(getApplicationContext(), BMSClient.REGION_SYDNEY);
 
         /// Initialize put-request to Bluemix cloud
-        Request request = new Request(getApplicationContext().getResources().getString(R.string.cloudantUrl) + "/timetable_db", Request.PUT);
+        Request request = new Request(getApplicationContext().getResources().getString(R.string.cloudantUrl) + "/student_timetable_db", Request.PUT);
 
         /// Get auth string and convert to UTF-8
         byte[] byteAuth = new byte[0];
@@ -148,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        push.registerDeviceWithUserId("jake.spb@gmail.com", new MFPPushResponseListener<String>() {
+        push.registerDeviceWithUserId(mEmail, new MFPPushResponseListener<String>() {
             @Override
             public void onSuccess(String response) {
                 push.listen(notificationListener);
