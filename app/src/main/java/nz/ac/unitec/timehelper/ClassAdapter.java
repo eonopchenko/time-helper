@@ -44,16 +44,18 @@ public class ClassAdapter extends BaseAdapter implements ListAdapter {
 
         if(convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.class_item, parent, false);
+            convertView = inflater.inflate(R.layout.row_class_list, parent, false);
         }
 
-        TextView start = (TextView) convertView.findViewById(R.id.txtClassStart);
-        TextView duration = (TextView) convertView.findViewById(R.id.txtClassDuration);
-        TextView title = (TextView) convertView.findViewById(R.id.txtClassTitle);
+        TextView start = (TextView) convertView.findViewById(R.id.tvRowClassStart);
+//        TextView duration = (TextView) convertView.findViewById(R.id.txtClassDuration);
+        TextView title = (TextView) convertView.findViewById(R.id.tvRowClassTitle);
+        TextView venue = (TextView) convertView.findViewById(R.id.tvRowClassVenue);
         ClassItem t = this.classes.get(position);
         start.setText(t.getStart());
-        duration.setText(t.getDuration());
+//        duration.setText(t.getDuration());
         title.setText(t.getTitle());
+        venue.setText(t.getTitle());
 
         return convertView;
     }

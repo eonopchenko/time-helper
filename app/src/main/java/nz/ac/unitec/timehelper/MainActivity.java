@@ -2,6 +2,7 @@ package nz.ac.unitec.timehelper;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ListView;
 
 import com.ibm.bluemix.appid.android.api.AppID;
 import com.ibm.bluemix.appid.android.api.AuthorizationException;
@@ -19,12 +20,14 @@ public class MainActivity extends AppCompatActivity {
 
     private ClassModel sClasses;
     private ClassAdapter mClassAdapter;
+    private ListView lstClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         activity = this;
+        lstClass = (ListView) findViewById(R.id.lvClassList);
 
         AppID.getInstance().initialize(getApplicationContext(), "382fc624-ad4d-461d-867c-99be7a1f2179", AppID.REGION_SYDNEY);
         Login(AppID.getInstance().getLoginWidget(), new LoginSuccessListener() {
@@ -34,9 +37,15 @@ public class MainActivity extends AppCompatActivity {
 
                 sClasses = new ClassModel(activity.getApplicationContext());
                 List<ClassItem> classes = sClasses.allClasses(userId);
-//                activity.mClassAdapter = new ClassAdapter(activity, classes);
+                activity.mClassAdapter = new ClassAdapter(activity, classes);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        lstClass.setAdapter(activity.mClassAdapter);
+                    }
+                });
                 MapFragment frMap = (MapFragment) getFragmentManager().findFragmentById(R.id.frMap);
                 frMap.onClassLocationAvailable(classes, activity);
+
             }
         });
     }
