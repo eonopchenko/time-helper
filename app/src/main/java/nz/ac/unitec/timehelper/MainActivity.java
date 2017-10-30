@@ -2,7 +2,6 @@ package nz.ac.unitec.timehelper;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -13,21 +12,14 @@ import com.ibm.bluemix.appid.android.api.LoginWidget;
 import com.ibm.bluemix.appid.android.api.tokens.AccessToken;
 import com.ibm.bluemix.appid.android.api.tokens.IdentityToken;
 import com.ibm.mobilefirstplatform.clientsdk.android.core.api.BMSClient;
-import com.ibm.mobilefirstplatform.clientsdk.android.core.api.Request;
-import com.ibm.mobilefirstplatform.clientsdk.android.core.api.Response;
-import com.ibm.mobilefirstplatform.clientsdk.android.core.api.ResponseListener;
 
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     static MainActivity activity;
 
+    private StudentClassModel sStudentClasses;
     private ClassModel sClasses;
     private ClassAdapter mClassAdapter;
     private ListView lstClass;
@@ -40,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         activity = this;
         lstClass = (ListView) findViewById(R.id.lvClassList);
+        sStudentClasses = new StudentClassModel(this.getApplicationContext());
         sClasses = new ClassModel(this.getApplicationContext());
 
         AppID.getInstance().initialize(getApplicationContext(), "382fc624-ad4d-461d-867c-99be7a1f2179", AppID.REGION_SYDNEY);
@@ -51,42 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
                 BMSClient.getInstance().initialize(getApplicationContext(), BMSClient.REGION_SYDNEY);
 
-                /// Initialize put-request to Bluemix cloud
-                Request request = new Request(getApplicationContext().getResources().getString(R.string.cloudantUrl) + "/lecturer_timetable_db", Request.PUT);
-
-                /// Get auth string and convert to UTF-8
-                byte[] byteAuth = new byte[0];
-                String byteString = getString(R.string.cloudantUsername) + ":" + getString(R.string.cloudantPassword);
-                try {
-                    byteAuth = byteString.getBytes("UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                /// Convert auth string to Base64 scheme
-                String base64Auth = Base64.encodeToString(byteAuth, Base64.NO_WRAP);
-
-                /// Set request headers
-                HashMap headers = new HashMap();
-                List<String> authorization = new ArrayList<>();
-                authorization.add("Basic " + base64Auth);
-                headers.put("authorization", authorization);
-                request.setHeaders(headers);
-
-                /// Send request
-                request.send(getApplicationContext(), new ResponseListener() {
-                    @Override
-                    public void onSuccess(Response response) {
-                    }
-
-                    @Override
-                    public void onFailure(Response response, Throwable throwable, JSONObject extendedInfo) {
-                    }
-                });
-
-                sClasses.setReplicationListener(activity);
-
-                reloadClassesFromModel(userId);
+                sStudentClasses.setReplicationListener(activity);
+                reloadStudentClassesFromModel(userId);
             }
         });
     }
@@ -114,16 +73,32 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         /// Does not invoked on the app launch
+        if(sStudentClasses != null) {
+            sStudentClasses.startPullReplication();
+        }
+
         if(sClasses != null) {
             sClasses.startPullReplication();
         }
     }
 
-    private void reloadClassesFromModel(final String userId) {
+    private void reloadStudentClassesFromModel(final String userId) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                List<ClassItem> classes = sClasses.allClasses(userId);
+                List<StudentClassItem> studentClasses = sStudentClasses.allStudentClasses(userId);
+                sClasses.setReplicationListener(activity);
+                reloadClassesFromModel(studentClasses);
+            }
+        });
+    }
+
+    private void reloadClassesFromModel(final List<StudentClassItem> studentClasses) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                List<ClassItem> classes = sClasses.allClasses(studentClasses);
+                sClasses.setReplicationListener(activity);
                 activity.mClassAdapter = new ClassAdapter(activity, classes);
                 lstClass.setAdapter(activity.mClassAdapter);
                 MapFragment frMap = (MapFragment) getFragmentManager().findFragmentById(R.id.frMap);
@@ -132,14 +107,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    void replicationComplete() {
-        reloadClassesFromModel(mUserId);
+    void classReplicationComplete() {
+        reloadStudentClassesFromModel(mUserId);
         Toast.makeText(getApplicationContext(),
                 R.string.replication_completed,
                 Toast.LENGTH_LONG).show();
     }
 
-    void replicationError() {
-        reloadClassesFromModel(mUserId);
+    void classReplicationError() {
+    }
+
+    void studentClassReplicationComplete() {
+        reloadStudentClassesFromModel(mUserId);
+        Toast.makeText(getApplicationContext(),
+                R.string.replication_completed,
+                Toast.LENGTH_LONG).show();
+    }
+
+    void studentClassReplicationError() {
     }
 }

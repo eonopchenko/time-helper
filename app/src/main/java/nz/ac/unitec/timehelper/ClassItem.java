@@ -1,7 +1,10 @@
 package nz.ac.unitec.timehelper;
 
+import android.graphics.Path;
+
 import com.cloudant.sync.datastore.DocumentRevision;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,23 +54,33 @@ public class ClassItem {
         this.mVenue = venue;
     }
 
-    static ClassItem fromRevision(DocumentRevision rev, String userId) {
+    static ClassItem fromRevision(DocumentRevision rev, List<StudentClassItem> classes) {
         Map<String, Object> map = rev.asMap();
 
-        if(map.containsKey("lecturerId") &&
-           map.get("lecturerId").equals(userId) &&
+        if(map.containsKey("_id") &&
            map.containsKey("start") &&
            map.containsKey("duration") &&
            map.containsKey("title")) {
-            ClassItem t = new ClassItem(
-                    (String) map.get("start"),
-                    (String) map.get("duration"),
-                    (String) map.get("title"),
-                    Double.parseDouble((String) map.get("lat")),
-                    Double.parseDouble((String) map.get("lng")),
-                    (String) map.get("venue"));
-            t.rev = rev;
-            return t;
+
+            boolean found = false;
+            for(StudentClassItem classItem : classes) {
+                if(classItem.getClassId().equals(map.get("_id"))) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if(found) {
+                ClassItem t = new ClassItem(
+                        (String) map.get("start"),
+                        (String) map.get("duration"),
+                        (String) map.get("title"),
+                        Double.parseDouble((String) map.get("lat")),
+                        Double.parseDouble((String) map.get("lng")),
+                        (String) map.get("venue"));
+                t.rev = rev;
+                return t;
+            }
         }
         return null;
     }

@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by eugene on 28/08/2017.
+ * Created by eugene on 31/10/2017.
  */
 
-public class ClassModel {
+public class StudentClassModel {
 
     private Context mContext;
     private MainActivity mListener;
@@ -31,19 +31,19 @@ public class ClassModel {
     private Replicator mPullReplicator;
     private final Handler mHandler;
 
-    ClassModel(Context context) {
+    StudentClassModel(Context context) {
         mContext = context;
         java.io.File path = mContext.getDir("datastores", android.content.Context.MODE_PRIVATE);
         DatastoreManager manager = DatastoreManager.getInstance(path);
 
         try {
-            cloudantUri = new java.net.URI(mContext.getResources().getString(R.string.cloudantUrl) + "/lecturer_timetable_db");
+            cloudantUri = new java.net.URI(mContext.getResources().getString(R.string.cloudantUrl) + "/student_timetable_db");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
         try {
-            ds = manager.openDatastore("class_ds");
+            ds = manager.openDatastore("student_class_ds");
         } catch (DatastoreNotCreatedException e) {
             e.printStackTrace();
         }
@@ -54,13 +54,13 @@ public class ClassModel {
         mHandler = new Handler(Looper.getMainLooper());
     }
 
-    List<ClassItem> allClasses(List<StudentClassItem> studentClasses) {
+    List<StudentClassItem> allStudentClasses(String userId) {
         int nDocs = this.ds.getDocumentCount();
         List<DocumentRevision> all = this.ds.getAllDocuments(0, nDocs, true);
-        List<ClassItem> classes = new ArrayList<>();
+        List<StudentClassItem> classes = new ArrayList<>();
 
         for(DocumentRevision rev : all) {
-            ClassItem t = ClassItem.fromRevision(rev, studentClasses);
+            StudentClassItem t = StudentClassItem.fromRevision(rev, userId);
             if (t != null) {
                 classes.add(t);
             }
@@ -79,7 +79,7 @@ public class ClassModel {
             @Override
             public void run() {
                 if (mListener != null) {
-                    mListener.classReplicationComplete();
+                    mListener.studentClassReplicationComplete();
                 }
             }
         });
@@ -91,7 +91,7 @@ public class ClassModel {
             @Override
             public void run() {
                 if (mListener != null) {
-                    mListener.classReplicationError();
+                    mListener.studentClassReplicationError();
                 }
             }
         });
