@@ -8,9 +8,6 @@ import com.cloudant.sync.datastore.Datastore;
 import com.cloudant.sync.datastore.DatastoreManager;
 import com.cloudant.sync.datastore.DatastoreNotCreatedException;
 import com.cloudant.sync.datastore.DocumentRevision;
-import com.cloudant.sync.event.Subscribe;
-import com.cloudant.sync.notifications.ReplicationCompleted;
-import com.cloudant.sync.notifications.ReplicationErrored;
 import com.cloudant.sync.replication.Replicator;
 import com.cloudant.sync.replication.ReplicatorBuilder;
 
@@ -25,7 +22,6 @@ import java.util.List;
 public class ClassModel {
 
     private Context mContext;
-    private MainActivity mListener;
     private java.net.URI cloudantUri;
     private Datastore ds;
     private Replicator mPullReplicator;
@@ -71,33 +67,5 @@ public class ClassModel {
 
     void startPullReplication() {
         mPullReplicator.start();
-    }
-
-//    @Subscribe
-//    public void complete(ReplicationCompleted rc) {
-//        mHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mListener != null) {
-//                    mListener.replicationComplete();
-//                }
-//            }
-//        });
-//    }
-//
-//    @Subscribe
-//    public void error(ReplicationErrored re) {
-//        mHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mListener != null) {
-//                    mListener.replicationError();
-//                }
-//            }
-//        });
-//    }
-//
-    void setReplicationListener(MainActivity listener) {
-        this.mListener = listener;
     }
 }
