@@ -132,6 +132,14 @@ public class MainActivity extends AppCompatActivity {
         mReplicationRequested = true;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (push != null) {
+            push.hold();
+        }
+    }
+
     private void reloadStudentClassesFromModel(final String userId) {
         runOnUiThread(new Runnable() {
             @Override
