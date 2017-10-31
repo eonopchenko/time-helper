@@ -1,5 +1,6 @@
 package nz.ac.unitec.timehelper;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
@@ -12,6 +13,11 @@ import com.ibm.bluemix.appid.android.api.LoginWidget;
 import com.ibm.bluemix.appid.android.api.tokens.AccessToken;
 import com.ibm.bluemix.appid.android.api.tokens.IdentityToken;
 import com.ibm.mobilefirstplatform.clientsdk.android.core.api.BMSClient;
+import com.ibm.mobilefirstplatform.clientsdk.android.push.api.MFPPush;
+import com.ibm.mobilefirstplatform.clientsdk.android.push.api.MFPPushException;
+import com.ibm.mobilefirstplatform.clientsdk.android.push.api.MFPPushNotificationListener;
+import com.ibm.mobilefirstplatform.clientsdk.android.push.api.MFPPushResponseListener;
+import com.ibm.mobilefirstplatform.clientsdk.android.push.api.MFPSimplePushNotification;
 
 import java.util.List;
 
@@ -25,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
     private ListView lstClass;
 
     private String mUserId;
+
+    private MFPPush push;
+    private MFPPushNotificationListener notificationListener;
+
+    private boolean mReplicationRequested = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +57,43 @@ public class MainActivity extends AppCompatActivity {
 
                 sStudentClasses.setReplicationListener(activity);
                 reloadStudentClassesFromModel(userId);
+
+                /// Subscribe on push-notifications https://console.bluemix.net/docs/services/mobilepush/getting-started.html
+                push = MFPPush.getInstance();
+                push.initialize(getApplicationContext(), "1e1125cd-32ed-4e96-bb35-ab62cb806322", "cddc35ba-0793-4ebc-aee7-4f908f767c2e");
+
+                notificationListener = new MFPPushNotificationListener() {
+                    @Override
+                    public void onReceive(final MFPSimplePushNotification message) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                new android.app.AlertDialog.Builder(MainActivity.this)
+                                        .setTitle("Received a Push Notification")
+                                        .setMessage(message.getAlert())
+                                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                if(!mReplicationRequested) {
+                                                    sStudentClasses.startPullReplication();
+                                                }
+                                            }
+                                        })
+                                        .show();
+                            }
+                        });
+                    }
+                };
+
+                push.registerDeviceWithUserId(userId, new MFPPushResponseListener<String>() {
+                    @Override
+                    public void onSuccess(String response) {
+                        push.listen(notificationListener);
+                    }
+
+                    @Override
+                    public void onFailure(MFPPushException exception) {
+
+                    }
+                });
             }
         });
     }
@@ -80,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
         if(sClasses != null) {
             sClasses.startPullReplication();
         }
+
+        mReplicationRequested = true;
     }
 
     private void reloadStudentClassesFromModel(final String userId) {
@@ -122,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),
                 R.string.replication_completed,
                 Toast.LENGTH_LONG).show();
+        mReplicationRequested = false;
     }
 
     void studentClassReplicationError() {

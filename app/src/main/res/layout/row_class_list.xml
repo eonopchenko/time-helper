@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@color/colorPrimary">
+    android:layout_height="64dp"
+    android:background="@color/colorPrimary"
+    android:orientation="horizontal">
+
     <CheckBox
         android:id="@+id/cbRowClass"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </CheckBox>
+        android:layout_height="wrap_content"></CheckBox>
+
     <LinearLayout
         android:id="@+id/llRowClass"
         android:layout_width="0dp"
@@ -17,38 +17,20 @@
         android:layout_marginStart="5dp"
         android:layout_weight="1"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/tvRowClassStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text=""
-            android:textSize="16sp"
-            android:textColor="@android:color/white">
-        </TextView>
-        <TextView
-            android:id="@+id/tvRowClassTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="10dp"
-            android:text=""
-            android:textColor="@android:color/white">
-        </TextView>
-        <TextView
-            android:id="@+id/tvRowClassVenue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="10dp"
-            android:text=""
-            android:textColor="@android:color/white">
-        </TextView>
+            android:textColor="@android:color/white"
+            android:textSize="16sp"></TextView>
     </LinearLayout>
+
     <ImageView
         android:id="@+id/ivRowClass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher">
-    </ImageView>
+        android:src="@mipmap/ic_launcher"></ImageView>
 </LinearLayout>

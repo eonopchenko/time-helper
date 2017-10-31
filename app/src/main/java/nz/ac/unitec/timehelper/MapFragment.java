@@ -48,7 +48,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback/*, Class
                 for (ClassItem classItem : classes) {
                     double lat = classItem.getLat();
                     double lng = classItem.getLng();
-                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("title").snippet(lat + ", " + lng));
+                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(classItem.getStart() + " (" + classItem.getVenue() + ")").snippet(classItem.getTitle()));
                     CameraPosition camPos = CameraPosition.builder().target(new LatLng(lat, lng)).zoom(16).bearing(0).tilt(45).build();
                     mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(camPos));
                 }

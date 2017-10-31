@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -48,14 +49,9 @@ public class ClassAdapter extends BaseAdapter implements ListAdapter {
         }
 
         TextView start = (TextView) convertView.findViewById(R.id.tvRowClassStart);
-//        TextView duration = (TextView) convertView.findViewById(R.id.txtClassDuration);
-        TextView title = (TextView) convertView.findViewById(R.id.tvRowClassTitle);
-        TextView venue = (TextView) convertView.findViewById(R.id.tvRowClassVenue);
         ClassItem t = this.classes.get(position);
-        start.setText(t.getStart());
-//        duration.setText(t.getDuration());
-        title.setText(t.getTitle());
-        venue.setText(t.getTitle());
+        start.setText(t.getStart() + " " + t.getTitle() + " (" + t.getVenue() + ")");
+        ((ImageView) convertView.findViewById(R.id.ivRowClass)).setImageResource(R.drawable.flag);
 
         return convertView;
     }
